@@ -43,19 +43,19 @@ public class Driver {
         functionSet.add(multiply);
         functionSet.add(add);
         functionSet.add(cube);
-        List<Integer> termSet = new ArrayList<Integer>();
-        termSet.add(4);
-        termSet.add(5);
-        termSet.add(6);
+        List<Terminal<Integer>> termSet = new ArrayList<Terminal<Integer>>();
+        termSet.add(new TerminalExpression<Integer>(4));
+        termSet.add(new TerminalExpression<Integer>(5));
+        termSet.add(new TerminalExpression<Integer>(6));
         RandomExpressionBuilder<Integer> reb = new RandomExpressionBuilder<Integer>(functionSet, termSet);
         int highestAnswer = 0;
         int currentAnswer;
-        Expression<Integer> giveItAShot;
+        Evaluable<Integer> giveItAShot;
         long count = 0;
         while (highestAnswer != 10077696) {
             giveItAShot = reb.generateRandomExpression(2, "!grow");
 
-            currentAnswer = giveItAShot.evaluateExpression();
+            currentAnswer = giveItAShot.evaluate();
             count++;
             if (currentAnswer > highestAnswer) {
                 highestAnswer = currentAnswer;

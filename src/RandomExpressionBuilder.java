@@ -10,16 +10,28 @@ import java.util.Random;
 public class RandomExpressionBuilder<T> {
 
     List<Function<T>> functionSet;
-    List<T> terminalSet;
+    List<Terminal<T>> terminalSet;
     Random r;
 
-    public RandomExpressionBuilder(List<Function<T>> funcs, List<T> terms) {
+    public RandomExpressionBuilder(List<Function<T>> funcs, List<Terminal<T>> terms) {
         functionSet = funcs;
         terminalSet = terms;
         r = new Random();
     }
 
-    private T getRandomTerminal() {
+    public Evaluable<T> generateRandomExpression(int maxDepth, String func) {
+        if(maxDepth == 0 || growShouldStop(func)) {
+            return getRandomTerminal();
+        }
+        Function<T> f = getRandomFunction();
+        List<Evaluable<T>> argSet = new ArrayList<Evaluable<T>>();
+        for(int i = 0; i < f.getArity(); i++) {
+            argSet.add(generateRandomExpression(maxDepth - 1, func));
+        }
+        return new Expression<T>(f,argSet);
+    }
+
+    private Terminal<T> getRandomTerminal() {
         return terminalSet.get(r.nextInt(terminalSet.size()));
     }
 
@@ -27,17 +39,8 @@ public class RandomExpressionBuilder<T> {
         return functionSet.get(r.nextInt(functionSet.size()));
     }
 
-    public Expression<T> generateRandomExpression(int maxDepth, String func) {
-        if(maxDepth == 0 ||
-                (func.equals("grow") &&
-                        Math.random() < (double)terminalSet.size()/(terminalSet.size()+functionSet.size()))) {
-            return new Expression<T>(getRandomTerminal());
-        }
-        Function<T> f = getRandomFunction();
-        List<Expression<T>> argSet = new ArrayList<Expression<T>>();
-        for(int i = 0; i < f.getArity(); i++) {
-            argSet.add(generateRandomExpression(maxDepth - 1, func));
-        }
-        return new Expression<T>(f,argSet);
+    private boolean growShouldStop(String func) {
+        return (func.equals("grow") &&
+                Math.random() < (double)terminalSet.size()/(terminalSet.size()+functionSet.size()));
     }
 }
