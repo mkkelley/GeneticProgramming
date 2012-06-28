@@ -90,7 +90,7 @@ public class Driver {
             giveItAShot = reb.generateRandomExpression(5, "grow");
 
             //System.out.println("giveItAShot.toString() = " + giveItAShot.toString());
-            currentFitness = getFitness(giveItAShot, x);
+            currentFitness = getFitness(giveItAShot, bestFitness, x);
             count++;
             if (currentFitness < bestFitness) {
                 bestFitness = currentFitness;
@@ -106,9 +106,9 @@ public class Driver {
     static Map<TerminalVariable<Double>, Double> varMap = new HashMap<>();
 
     @SafeVarargs
-    public static double getFitness(Evaluable<Double> f, TerminalVariable<Double>... vars) {
+    public static double getFitness(Evaluable<Double> f, double max, TerminalVariable<Double>... vars) {
         double fitnessOffset = 0;
-        for (double v = -2; v <= 2; v+=.1) {
+        for (double v = -2; fitnessOffset < max && v <= 2; v+=.1) {
             varMap.put(vars[0], v);
             fitnessOffset += Math.abs(Math.cos(v) - f.evaluate(varMap));
             //fitnessOffset += Math.abs((Math.pow(v,2)+v+1) - f.evaluate(varMap));
