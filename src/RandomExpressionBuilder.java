@@ -9,9 +9,9 @@ import java.util.Random;
  */
 public class RandomExpressionBuilder<T> {
 
-    List<Function<T>> functionSet;
-    List<Terminal<T>> terminalSet;
-    Random r;
+    private List<Function<T>> functionSet;
+    private List<Terminal<T>> terminalSet;
+    private Random r;
 
     public RandomExpressionBuilder(List<Function<T>> funcs, List<Terminal<T>> terms) {
         functionSet = funcs;

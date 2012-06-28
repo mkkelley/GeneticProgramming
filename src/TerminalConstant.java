@@ -7,7 +7,7 @@ import java.util.Map;
  */
 public class TerminalConstant<T> implements Terminal<T> {
 
-    T value;
+    private T value;
 
     public TerminalConstant(T v) {
         value = v;
