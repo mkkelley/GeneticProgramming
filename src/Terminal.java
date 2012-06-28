@@ -4,4 +4,5 @@
  * Time: 9:18 PM
  */
 public interface Terminal<T> extends Evaluable<T> {
+    public T getValue();
 }

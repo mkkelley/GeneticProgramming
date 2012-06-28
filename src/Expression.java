@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: Michael
@@ -16,10 +17,11 @@ public class Expression<T> implements Evaluable<T> {
         this.args = args;
     }
 
-    public T evaluate() {
-        List<T> TArgs = new ArrayList<T>();
+    @Override
+    public T evaluate(Map<TerminalVariable<T>,T> variableValues) {
+        List<T> TArgs = new ArrayList<>();
         for (Evaluable<T> arg1 : args) {
-            TArgs.add(arg1.evaluate());
+            TArgs.add(arg1.evaluate(variableValues));
         }
         return function.executeWrapper(TArgs);
     }

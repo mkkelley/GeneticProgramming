@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * User: Michael
@@ -7,14 +7,17 @@ import java.util.ArrayList;
  */
 public abstract class TerminalFunction<T> extends Function<T> implements Terminal<T> {
 
-    private ArrayList<T> blankList;
     public TerminalFunction() {
         super(0);
-        blankList = new ArrayList<T>();
     }
 
     @Override
-    public T evaluate() {
-        return execute(blankList);
+    public T getValue() {
+        return execute(null);
+    }
+
+    @Override
+    public T evaluate(Map<TerminalVariable<T>, T> vars) {
+        return getValue();
     }
 }

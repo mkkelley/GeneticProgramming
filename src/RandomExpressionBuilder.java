@@ -24,11 +24,11 @@ public class RandomExpressionBuilder<T> {
             return getRandomTerminal();
         }
         Function<T> f = getRandomFunction();
-        List<Evaluable<T>> argSet = new ArrayList<Evaluable<T>>();
+        List<Evaluable<T>> argSet = new ArrayList<>();
         for(int i = 0; i < f.getArity(); i++) {
             argSet.add(generateRandomExpression(maxDepth - 1, func));
         }
-        return new Expression<T>(f,argSet);
+        return new Expression<>(f,argSet);
     }
 
     private Terminal<T> getRandomTerminal() {
