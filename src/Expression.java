@@ -55,7 +55,7 @@ public class Expression<T> implements Evaluable<T> {
     }
 
     private void setArgs(List<Evaluable<T>> args) throws IllegalArgumentException {
-        if(function.getArity() == args.size()) {
+        if(function.getArity() != args.size()) {
             throw new IllegalArgumentException("Function arity and given argument length do not match.");
         }
         this.args = args;

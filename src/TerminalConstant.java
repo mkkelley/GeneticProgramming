@@ -9,6 +9,10 @@ public class TerminalConstant<T> implements Terminal<T> {
 
     private T value;
 
+    /**
+     * Create a new constant with the given value.
+     * @param v The value of the constant.
+     */
     public TerminalConstant(T v) {
         value = v;
     }

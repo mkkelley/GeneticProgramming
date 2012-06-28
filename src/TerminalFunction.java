@@ -7,6 +7,10 @@ import java.util.Map;
  */
 public abstract class TerminalFunction<T> extends Function<T> implements Terminal<T> {
 
+    /**
+     * Initializes a new 0-arity function.
+     * Execute must be overridden.
+     */
     public TerminalFunction() {
         super(0);
     }
