@@ -43,6 +43,53 @@ public class Expression<T> implements Evaluable<T> {
         return function.executeWrapper(TArgs);
     }
 
+    public Expression<T> replaceExpressionAtNode(Expression<T> toBeReplaced, Expression<T> toReplace) {
+        if(toReplace.equals(toBeReplaced)) {
+            return this;
+        }
+        if(this.getAllExpressions().contains(toReplace)) {
+            toReplace = new Expression<T>(function,args);
+        }
+        Expression<T> newExpr = new Expression<>(function,args);
+        for (int i = 0; i < newExpr.args.size(); i++) {
+            if(newExpr.args.get(i).equals(toBeReplaced)) {
+                newExpr.args.set(i,toReplace);
+                break;
+            }
+            if (newExpr.args.get(i) instanceof Expression) {
+                ((Expression<T>) newExpr.args.get(i)).replaceExpressionAtNode(toBeReplaced,toReplace);
+            }
+        }
+        return newExpr;
+    }
+
+    public Expression<T> replaceTerminal(Terminal<T> toBeReplaced, Terminal<T> toReplace) {
+        Expression<T> newExpr = new Expression<>(function,args);
+        for (int i = 0; i < newExpr.args.size(); i++) {
+            if(newExpr.args.get(i).equals(toBeReplaced)) {
+                newExpr.args.set(i,toReplace);
+                break;
+            }
+            if(newExpr.args.get(i) instanceof Expression) {
+                ((Expression<T>) newExpr.args.get(i)).replaceTerminal(toBeReplaced,toReplace);
+            }
+        }
+        return newExpr;
+    }
+
+    public List<Evaluable<T>> getAllExpressions() {
+        List<Evaluable<T>> exprList = new ArrayList<>();
+        for (Evaluable<T> ex : args) {
+            if (ex instanceof Terminal) {
+                exprList.add(ex);
+            } else if (ex instanceof Expression && !((Expression) ex).getAllExpressions().contains(ex)) {
+                exprList.addAll(((Expression<T>) ex).getAllExpressions());
+            }
+        }
+        exprList.add(this);
+        return exprList;
+    }
+
     @Override
     public String toString() {
         String tempString = "";
