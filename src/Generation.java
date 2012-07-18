@@ -38,19 +38,36 @@ public class Generation<T> {
         };
         termSet.add(x);
         RandomExpressionBuilder<Double> reb = new RandomExpressionBuilder<>(functionSet, termSet);
-        Generation<Double> gen = new Generation<>(reb, 3);
+
+        Evaluable<Double> bestExpression;
+        double bestFitness;
+
+        Generation<Double> gen = new Generation<>(reb, 5);
         gen.evaluateFitnessOfAll(ff,x);
-        for (int i = 0; i < gen.individuals.size(); i++) {
-            System.out.println("gen.individuals.get(i) = " + gen.individuals.get(i));
-        }
-        Generation currentGen = gen.createOffspring();
+        bestExpression = gen.getBestEvaluable();
+        bestFitness = gen.individualsFitness.get(bestExpression);
+        Generation<Double> currentGen = gen.createOffspring();
         for(int i = 0 ; i < 50; i++) {
-            //gen2.evaluateFitnessOfAll(ff,x);
-            for (int j = 0; j < currentGen.individuals.size(); j++) {
-                System.out.println("gen2.individuals.get(i) = " + currentGen.individuals.get(i));
-            }
+            currentGen.evaluateFitnessOfAll(ff,x);
+//            for (int j = 0; j < currentGen.individuals.size(); j++) {
+//                System.out.println( i + ".individuals.get(i) = " + currentGen.individuals.get(j));
+//            }
+            Evaluable<Double> genBest = currentGen.getBestEvaluable();
+            Double bestStuff = currentGen.individualsFitness.get(genBest);
+            System.out.println("genBest = " + genBest);
+            System.out.println("bestStuff = " + bestStuff);
+//            Double genBestFitness = currentGen.individualsFitness.get(genBest);
+//            System.out.println("genBest = " + genBest);
+//            System.out.println("genBestFitness = " + genBestFitness);
+//            if (genBestFitness < bestFitness) {
+//                System.out.println("THEORETICALLY IMPROVING");
+//                bestFitness = genBestFitness;
+//                bestExpression = genBest;
+//            }
             currentGen = currentGen.createOffspring();
         }
+        System.out.println("bestExpression = " + bestExpression);
+        System.out.println("bestFitness = " + bestFitness);
     }
 
     private static final double CHOOSE_SUBTREE_XOVER_CHANCE = 1.1;
@@ -61,7 +78,7 @@ public class Generation<T> {
 
     private static final String fullFunc = "full";
 
-    private static final int POPULATION_SIZE = 5000;
+    private static final int POPULATION_SIZE = 300000;
 
     private List<Evaluable<T>> individuals;
 
@@ -82,11 +99,22 @@ public class Generation<T> {
     }
 
     private Generation(List<Evaluable<T>> indivs, Map<Evaluable<T>,Double> indivFit) {
+        r = new Random();
         individuals = new ArrayList<>();
         individuals.addAll(indivs);
         individualsFitness = new HashMap<>();
         individualsFitness.putAll(indivFit);
         System.out.println("gen2 individuals.size() = " + individuals.size());
+    }
+
+    private Generation() {
+        r = new Random();
+        individuals = new ArrayList<>();
+        individualsFitness = new HashMap<>();
+    }
+
+    public double getFitnessOfEvaluable(Evaluable<T> ev) {
+        return individualsFitness.get(ev);
     }
 
     @SafeVarargs
@@ -99,10 +127,11 @@ public class Generation<T> {
             }
             individualsFitness.put(ev, evFitness);
         }
+        System.out.println("maxFitness = " + maxFitness);
     }
 
     public Generation<T> createOffspring() {
-        Generation<T> newGeneration = new Generation<>(individuals, individualsFitness);
+        Generation<T> newGeneration = new Generation<>();
         for (int i = 0; i < POPULATION_SIZE; i++) {
             Evaluable<T> ts1 = tournamentSelection();
             Evaluable<T> ts2 = tournamentSelection();
@@ -110,7 +139,8 @@ public class Generation<T> {
                 i--;
                 continue;
             }
-            newGeneration.individuals.set(i,subtreeCrossover((Expression<T>)ts1,(Expression<T>)ts2));
+            Expression<T> newExpression = subtreeCrossover((Expression<T>) ts1, (Expression<T>) ts2);
+            newGeneration.individuals.add(newExpression);
         }
         return newGeneration;
     }
@@ -162,10 +192,25 @@ public class Generation<T> {
         return newExpression;
     }
 
+    public Evaluable<T> getBestEvaluable() {
+        double best = Double.MAX_VALUE;
+        Evaluable<T> bestEvaluable = null;
+        for(Evaluable<T> ev : individuals) {
+            double fitness = individualsFitness.get(ev);
+            if (fitness < best) {
+                best = individualsFitness.get(ev);
+                bestEvaluable = ev;
+                System.out.println("THEORETICAL IMPROVEMENT");
+            }
+        }
+        return bestEvaluable;
+    }
+
     private Evaluable<T> tournamentSelection() {
-        List<Evaluable<T>> selections = new ArrayList<>(POPULATION_SIZE / 10);
-        for (int i = 0; i < POPULATION_SIZE / 10; i++) {
-            selections.add(individuals.get(r.nextInt(POPULATION_SIZE)));
+        List<Evaluable<T>> selections = new ArrayList<>(POPULATION_SIZE / 1000);
+        for (int i = 0; i < POPULATION_SIZE / 1000; i++) {
+            int rand = r.nextInt(POPULATION_SIZE);
+            selections.add(individuals.get(rand));
         }
         Evaluable<T> selection = selections.get(0);
         double bestFitness = individualsFitness.get(selection);

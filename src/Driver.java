@@ -50,9 +50,9 @@ public class Driver {
                 bestAnswer = giveItAShot;
                 System.out.println("bestFitness = " + bestFitness);
                 System.out.println("bestAnswer.toString() = " + bestAnswer.toString());
-                if (bestAnswer instanceof Expression) {
-                    System.out.println("((Expression<Double>)bestAnswer).getAllExpressions() = " + ((Expression<Double>) bestAnswer).getAllExpressions());
-                }
+//                if (bestAnswer instanceof Expression) {
+//                    System.out.println("((Expression<Double>)bestAnswer).getAllExpressions() = " + ((Expression<Double>) bestAnswer).getAllExpressions());
+//                }
             }
 
         }
